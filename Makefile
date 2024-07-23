@@ -8,3 +8,9 @@ install-deps:
 
 save-env:
 	pip freeze > requirements.txt
+
+notebook:
+	jupyter notebook ./train.ipynb
+
+demo:
+	streamlit run ./app.py
