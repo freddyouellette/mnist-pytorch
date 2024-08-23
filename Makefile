@@ -13,4 +13,4 @@ notebook:
 	jupyter notebook ./train.ipynb
 
 demo:
-	streamlit run ./app.py
+	streamlit run ./demo.py

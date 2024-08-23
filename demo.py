@@ -4,12 +4,15 @@ import streamlit as st
 from streamlit_drawable_canvas import st_canvas
 from PIL import Image
 from torchvision import transforms
-import torch.nn as nn
 from model import model
+import os
 
 device_name = "cuda" if torch.cuda.is_available() else "cpu"
-print("Using GPU with CUDA" if device_name == "cuda" else "Using CPU")
 device = torch.device(device_name)
+
+if not os.path.exists('model.pth'):
+    st.write('Model not found. Please train the model first with the train.ipynb Jupyter Notebook.')
+    exit()
 
 model.load_state_dict(torch.load('model.pth'))
 model.eval()
@@ -19,6 +22,9 @@ transform_steps = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,)),
 ])
+
+st.markdown('# Handwritten Digit Recognition')
+st.write('Draw a digit from 0 to 9 in the canvas below to see the model\'s prediction.')
 
 SIZE = 192
 canvas_result = st_canvas(
@@ -42,8 +48,12 @@ input_tensor = transform_steps(pil_image)
 input_tensor = input_tensor.unsqueeze(0)
 input_tensor = input_tensor.to(device)
 
+result = st.empty()
+
+result.markdown(f'# Model Prediction: ...')
+
 with torch.no_grad():
     outputs = model(input_tensor)
 
 _, predictions = torch.max(outputs, 1)
-st.write(f'MODEL PREDICTION: {predictions[0]}')
+result.markdown(f'# Model Prediction: {predictions[0]}')
