@@ -5,9 +5,9 @@ model_options = {
     "epochs": 3,
     "batch_size": 1000,
     "eval_batch_interval": 10,
-    "learning_rate": 2e-3,
+    "learning_rate": 5e-3,
     "weight_decay": 0.01,
-    "dropout": 0.3,
+    "dropout": 0.2,
 }
 
 model = nn.Sequential(
