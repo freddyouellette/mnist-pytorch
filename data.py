@@ -24,7 +24,7 @@ class AddRandomNoise(object):
         noise = torch.randn(tensor.size()) * actual_std + self.mean
         return tensor + noise
 
-def get_data(batch_size):
+def get_data(batch_size, log=True):
     transform_steps = transforms.Compose([
         transforms.RandomRotation(40, fill=0),
         transforms.RandomPerspective(fill=0),
@@ -45,11 +45,12 @@ def get_data(batch_size):
     i = random.randint(0, len(test_data) - 1)
     random_sample_img, random_sample_label = test_data[i]
 
-    # show the number of rows and columns
-    print( "# training samples:" + str(len(train_data)) )
-    print( "# testing samples:" + str(len(test_data)) )
-    # print( "cols (# features):" + str(random_sample_img.numel()) )
-    print(f"image size: ({random_sample_img.shape[1]}, {random_sample_img.shape[2]})")
-    print("features per sample:", random_sample_img.flatten().shape[0])
+    if log:
+        # show the number of rows and columns
+        print( "# training samples:" + str(len(train_data)) )
+        print( "# testing samples:" + str(len(test_data)) )
+        # print( "cols (# features):" + str(random_sample_img.numel()) )
+        print(f"image size: ({random_sample_img.shape[1]}, {random_sample_img.shape[2]})")
+        print("features per sample:", random_sample_img.flatten().shape[0])
     
     return trainloader, testloader

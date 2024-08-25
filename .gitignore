@@ -3,4 +3,5 @@
 /.ipynb_checkpoints
 /data
 /model.pth
+/model*.pth
 /__pycache__
