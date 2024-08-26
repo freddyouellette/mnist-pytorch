@@ -3,10 +3,11 @@ import torch.optim as optim
 
 model_options = {
     "epochs": 3,
-    "batch_size": 1000,
-    "eval_batch_interval": 10,
-    "learning_rate": 5e-3,
-    "weight_decay": 0.01,
+    "batch_size": 100,
+    "eval_batch_interval": 100,
+    "learning_rate": 2e-3,
+    "learning_rate_decay_ratio": 0.3,
+    "weight_decay": 0.0001,
     "dropout": 0.2,
 }
 
@@ -50,6 +51,10 @@ optimizer = optim.Adam(
 )
 
 # scheduler will step at each eval
-scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=60000 * model_options['epochs'] / model_options['batch_size'] / model_options['eval_batch_interval'])
+scheduler = optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, 
+    T_max=60000 * model_options['epochs'] / model_options['batch_size'] / model_options['eval_batch_interval'],
+    eta_min=model_options['learning_rate'] * model_options['learning_rate_decay_ratio']
+)
 
 loss_function = nn.CrossEntropyLoss()
