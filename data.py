@@ -1,12 +1,12 @@
 import torch
 import torchvision
-import torchvision.transforms as transforms
+import torchvision.transforms.v2 as transforms
 import random
 import numpy as np
 
 # prepare preprocessing of data
 class AddRandomNoise(object):
-    def __init__(self, mean=0.0, std1=0.1, std2=0.3):
+    def __init__(self, mean=0.0, std1=0.1, std2=0.2):
         self.mean = mean
         self.std1 = std1  # Lower bound of the standard deviation range
         self.std2 = std2  # Upper bound of the standard deviation range
@@ -28,9 +28,11 @@ def get_data(batch_size, log=True):
     transform_steps = transforms.Compose([
         transforms.RandomRotation(40, fill=0),
         transforms.RandomPerspective(fill=0),
-        transforms.ElasticTransform(alpha=80.0),
+        transforms.ElasticTransform(alpha=40.0),
         transforms.RandomAffine(0, (0.1,0.1), fill=0),
         transforms.RandomResizedCrop((28), scale=(1.0, 1.5)),
+        transforms.RandomZoomOut(fill=0, side_range=(1.0, 2.0), p=1.0),
+        transforms.Resize((28, 28)),
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,)),
         AddRandomNoise(),
