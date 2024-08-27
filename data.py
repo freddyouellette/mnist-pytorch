@@ -25,23 +25,42 @@ class AddRandomNoise(object):
         return tensor + noise
 
 def get_data(batch_size, log=True):
-    transform_steps = transforms.Compose([
-        transforms.RandomRotation(40, fill=0),
-        transforms.RandomPerspective(fill=0),
-        transforms.ElasticTransform(alpha=40.0),
-        transforms.RandomAffine(0, (0.1,0.1), fill=0),
-        transforms.RandomResizedCrop((28), scale=(1.0, 1.5)),
-        transforms.RandomZoomOut(fill=0, side_range=(1.0, 2.0), p=1.0),
-        transforms.Resize((28, 28)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,)),
-        AddRandomNoise(),
+    train_transform_steps = transforms.Compose([
+        # only apply transformations to 50% of data, to prevent learning ONLY on transformed images
+        transforms.RandomChoice([
+            transforms.Compose([
+                transforms.RandomRotation(40, fill=0),
+                transforms.RandomPerspective(fill=0),
+                transforms.ElasticTransform(alpha=40.0),
+                transforms.RandomAffine(0, (0.1,0.1), fill=0),
+                transforms.RandomResizedCrop((28), scale=(1.0, 1.5)),
+                transforms.RandomZoomOut(fill=0, side_range=(1.0, 2.0), p=1.0),
+                transforms.Resize((28, 28)),
+                transforms.ToImage(),
+                transforms.ToDtype(torch.float32, scale=True),
+                transforms.Normalize((0.5,), (0.5,)),
+                AddRandomNoise(),
+            ]),
+            transforms.Compose([
+                transforms.Resize((28, 28)),
+                transforms.ToImage(),
+                transforms.ToDtype(torch.float32, scale=True),
+                transforms.Normalize((0.5,), (0.5,)),
+            ]),
+        ]),
     ])
 
-    train_data = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform_steps)
+    train_data = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=train_transform_steps)
     trainloader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=2)
 
-    test_data = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform_steps)
+    test_transform_steps = transforms.Compose([
+        transforms.Resize((28, 28)),
+        transforms.ToImage(),
+        transforms.ToDtype(torch.float32, scale=True),
+        transforms.Normalize((0.5,), (0.5,)),
+    ])
+
+    test_data = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=test_transform_steps)
     testloader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=2)
 
     i = random.randint(0, len(test_data) - 1)
