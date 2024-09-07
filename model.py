@@ -9,6 +9,7 @@ model_options = {
     "learning_rate_decay_ratio": 0.3,
     "weight_decay": 0.0001,
     "dropout": 0.2,
+    "sample_augmentation_ratio": 0.5,
 }
 
 model = nn.Sequential(
