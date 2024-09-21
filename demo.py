@@ -10,11 +10,16 @@ import os
 device_name = "cuda" if torch.cuda.is_available() else "cpu"
 device = torch.device(device_name)
 
-if not os.path.exists('model.pth'):
-    st.write('Model not found. Please train the model first with the train.ipynb Jupyter Notebook.')
+model_files = [f for f in os.listdir('models') if f.endswith('.pth')]
+selected_model = st.selectbox('Select Model', model_files)
+
+if selected_model:
+    model_path = os.path.join('models', selected_model)
+else:
+    st.write('No model selected.')
     exit()
 
-model.load_state_dict(torch.load('model.pth'))
+model.load_state_dict(torch.load(model_path))
 model.eval()
 model.to(device)
 
