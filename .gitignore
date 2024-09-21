@@ -1,7 +1,8 @@
 /.ignore
 /.env
+/venv
 /.ipynb_checkpoints
 /data
-/model.pth
-/model*.pth
+/models
 /__pycache__
+Makefile.local.mk

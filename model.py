@@ -1,9 +1,14 @@
 import torch.nn as nn
 import torch.optim as optim
+from dotenv import load_dotenv
+import os
+
+load_dotenv(".env", override=True)
+MAX_BATCH_SIZE = int(os.getenv("MAX_BATCH_SIZE"))
 
 model_options = {
     "epochs": 3,
-    "batch_size": 100,
+    "batch_size": min(MAX_BATCH_SIZE, 100),
     "eval_batch_interval": 100,
     "learning_rate": 2e-3,
     "learning_rate_decay_ratio": 0.3,
